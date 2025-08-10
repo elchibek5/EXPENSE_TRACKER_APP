@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 
-final formatter = DateFormat.yMd();
-
-final uuid = Uuid();
+final _formatter = DateFormat.yMd();
+final _uuid = Uuid();
 
 enum Category { food, travel, leisure, work }
 
@@ -21,7 +20,7 @@ class Expense {
     required this.amount,
     required this.date,
     required this.category,
-  }) : id = uuid.v4();
+  }) : id = _uuid.v4();
 
   final String id;
   final String title;
@@ -29,28 +28,18 @@ class Expense {
   final DateTime date;
   final Category category;
 
-  String get formattedDate {
-    return formatter.format(date);
-  }
+  String get formattedDate => _formatter.format(date);
 }
 
 class ExpenseBucket {
   const ExpenseBucket({required this.expenses, required this.category});
 
   ExpenseBucket.forCategory(List<Expense> allExpenses, this.category)
-    : expenses =
-          allExpenses.where((expense) => expense.category == category).toList();
+      : expenses = allExpenses.where((e) => e.category == category).toList();
 
   final Category category;
   final List<Expense> expenses;
 
-  double get totalExpenses {
-    double sum = 0;
-
-    for (final expense in expenses) {
-      sum += expense.amount;
-    }
-
-    return sum;
-  }
+  double get totalExpenses =>
+      expenses.fold(0, (sum, expense) => sum + expense.amount);
 }
